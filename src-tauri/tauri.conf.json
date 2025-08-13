@@ -54,14 +54,14 @@
         "depends": ["webkit2gtk4.1", "gtk3", "librsvg2"],
         "obsoletes": [],
         "provides": ["talkyai-studio"],
-        "desktopTemplate": "src-tauri/desktop-template.desktop"
+        "desktopTemplate": "desktop-template.desktop"
       },
       "deb": {
         "depends": ["libwebkit2gtk-4.1-0", "libgtk-3-0"],
         "files": {
           "/usr/share/README.md": "../README.md"
         },
-        "desktopTemplate": "src-tauri/desktop-template.desktop"
+        "desktopTemplate": "desktop-template.desktop"
       }
     }
   }
