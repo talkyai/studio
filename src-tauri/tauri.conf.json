@@ -43,7 +43,6 @@
       }
     },
     "linux": {
-      "desktopFilename": "talkyai-studio",
       "rpm": {
         "epoch": 0,
         "release": "1",
