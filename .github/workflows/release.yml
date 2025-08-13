@@ -1,4 +1,4 @@
-name: Release builds (Tauri v2)
+name: Release builds (TalkyAI Studio)
 
 on:
   workflow_dispatch:
