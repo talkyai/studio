@@ -39,7 +39,7 @@ jobs:
             patchelf
 
       - name: Install frontend deps
-        run: npm ci
+        run: npm install
 
       - name: Build app with Tauri Action
         uses: tauri-apps/tauri-action@v0
