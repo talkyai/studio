@@ -1,0 +1,13 @@
+# Build Linux bundles (deb/rpm) using Tauri v2 Docker image
+# Usage on Windows (PowerShell/cmd):
+#   docker build -f Dockerfile.linux -t talkyai-linux .
+#   docker run --rm -v %cd%:/work -w /work talkyai-linux
+# This produces Linux bundles under src-tauri/target/release/bundle/
+
+FROM ghcr.io/tauri-apps/tauri:v2
+
+# Work inside mounted project directory
+WORKDIR /work
+
+# Default command builds web, then Tauri Linux bundles (deb/rpm)
+CMD ["bash","-lc","npm ci && npm run build && npm run tauri build -- --bundles deb rpm"]

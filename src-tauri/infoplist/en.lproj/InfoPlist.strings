@@ -1,0 +1,2 @@
+NSCameraUsageDescription = "Request camera access for WebRTC";
+NSMicrophoneUsageDescription = "Request microphone access for WebRTC";

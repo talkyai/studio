@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=TalkyAI Studio
+Comment=Local & Cloud AI Assistant
+Exec=talkyai
+Icon=talkyai-studio
+Terminal=false
+Categories=Utility;Development;

@@ -1,0 +1,2 @@
+NSCameraUsageDescription = "Доступ к камере требуется для WebRTC";
+NSMicrophoneUsageDescription = "Доступ к микрофону требуется для WebRTC";

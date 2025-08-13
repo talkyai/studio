@@ -1,0 +1,109 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" id="aiChatIcon">
+    <style>
+        #aiChatIcon {
+        cursor: pointer;
+        transition: transform 0.3s;
+        }
+        #aiChatIcon:hover {
+        transform: scale(1.05);
+        }
+        #aiChatIcon:active {
+        transform: scale(0.95);
+        }
+        .ai-core {
+        transition: filter 0.5s, transform 0.5s;
+        }
+        #aiChatIcon:hover .ai-core {
+        filter: url(#coreGlow);
+        transform: rotate(10deg);
+        }
+        .chat-bubble {
+        transition: transform 0.4s;
+        }
+        #aiChatIcon:hover .chat-bubble {
+        transform: translateY(-5px);
+        }
+        .data-particle {
+        animation: float 4s infinite ease-in-out;
+        }
+        .data-particle:nth-child(2) {
+        animation-delay: 0.5s;
+        }
+        .data-particle:nth-child(3) {
+        animation-delay: 1s;
+        }
+        @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+        }
+    </style>
+
+    <!-- Ядро ИИ -->
+    <g class="ai-core" id="aiCore">
+        <path d="M60 30L40 50L60 70L80 50L60 30Z" fill="url(#coreGradient)" stroke="#00F5D4" stroke-width="2"/>
+        <path d="M50 40L70 60M50 60L70 40" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+    </g>
+
+    <!-- Чат-пузырь -->
+    <g class="chat-bubble" transform="translate(0 10)">
+        <path d="M30 60H90C95.5 60 100 64.5 100 70V90C100 95.5 95.5 100 90 100H70L60 110L50 100H30C24.5 100 20 95.5 20 90V70C20 64.5 24.5 60 30 60Z" fill="white" stroke="#3B82F6" stroke-width="2"/>
+        <rect x="40" y="75" width="40" height="5" rx="2.5" fill="#3B82F6"/>
+        <rect x="35" y="85" width="50" height="5" rx="2.5" fill="#3B82F6" fill-opacity="0.7"/>
+    </g>
+
+    <!-- Парящие частицы данных -->
+    <circle class="data-particle" cx="25" cy="30" r="3" fill="#00F5D4"/>
+    <circle class="data-particle" cx="95" cy="40" r="2" fill="#3B82F6"/>
+    <circle class="data-particle" cx="15" cy="80" r="2.5" fill="#00F5D4"/>
+
+    <!-- Фильтры и градиенты -->
+    <defs>
+        <linearGradient id="bgGradient" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#1E3A8A"/>
+            <stop offset="1" stop-color="#1E40AF"/>
+        </linearGradient>
+
+        <linearGradient id="coreGradient" x1="40" y1="30" x2="80" y2="70" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#00F5D4"/>
+            <stop offset="1" stop-color="#00B5D8"/>
+        </linearGradient>
+
+        <filter id="coreGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            <feColorMatrix type="matrix" values="
+        0 0 0 0 0
+        0 1 0 0 0
+        0 0 1 0 0
+        0 0 0 1 0"/>
+        </filter>
+    </defs>
+
+    <!-- Интерактивность через JavaScript -->
+    <script>
+        document.getElementById('aiChatIcon').addEventListener('click', function() {
+        const core = document.getElementById('aiCore');
+        core.animate([
+        { transform: 'scale(1)', opacity: 1 },
+        { transform: 'scale(1.2)', opacity: 0.8 },
+        { transform: 'scale(1)', opacity: 1 }
+        ], {
+        duration: 500,
+        iterations: 1
+        });
+
+        // Эффект "всплеска" частиц
+        const particles = document.querySelectorAll('.data-particle');
+        particles.forEach(particle => {
+        particle.animate([
+        { transform: 'translate(0, 0)' },
+        { transform: 'translate(' + (Math.random() * 20 - 10) + 'px, ' + (Math.random() * -30 - 15) + 'px)' },
+        { transform: 'translate(0, 0)' }
+        ], {
+        duration: 1000,
+        iterations: 1
+        });
+        });
+        });
+    </script>
+</svg>
