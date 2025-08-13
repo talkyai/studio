@@ -9,7 +9,7 @@ on:
       - 'v*'
 
 jobs:
-  publish-tauri:
+  publish-talkyai:
     permissions:
       contents: write
     strategy:
