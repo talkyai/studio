@@ -54,13 +54,32 @@ jobs:
       - name: install frontend dependencies
         run: npm install
 
+      - name: Prepare release notes
+        id: notes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const cfgPath = path.join('src-tauri', 'tauri.conf.json');
+            const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
+            const version = cfg.version || '';
+            const notesPath = path.join('notes', `v${version}.change_notes.md`);
+            let body = 'See the assets to download this version and install.';
+            if (fs.existsSync(notesPath)) {
+              body = fs.readFileSync(notesPath, 'utf8');
+            } else {
+              core.warning(`Change notes file not found: ${notesPath}. Using default body.`);
+            }
+            core.setOutput('body', body);
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: app-v__VERSION__
-          releaseName: 'App v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
+          releaseName: 'TalkyAI Studio v__VERSION__'
+          releaseBody: ${{ steps.notes.outputs.body }}
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
@@ -69,7 +88,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: talkyai-studio-${{ matrix.platform }}
+          name: talkyai-studio-${{ matrix.platform }}-${{ matrix.args }}
           path: |
             src-tauri/target/release/bundle/**/*
             src-tauri/target/release/*

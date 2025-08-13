@@ -24,6 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install host dependencies for arm-runner (xz-utils)
+        run: sudo apt-get update && sudo apt-get install -y xz-utils
+
       - name: Cache rust build artifacts
         uses: Swatinem/rust-cache@v2
         with:
