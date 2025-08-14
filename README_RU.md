@@ -1,4 +1,4 @@
-<p align="center"><img src="public/icon.svg" alt="TalkyAI Studio Logo" width="96" height="96"></p>
+<p align="center"><img src="public/icon.svg" alt="TalkyAI Studio Logo" width="200" height="200"></p>
 
 # TalkyAI Studio — локальный и облачный AI‑ассистент
 [![publish](https://github.com/talkyai/studio/actions/workflows/release.yml/badge.svg)](https://github.com/talkyai/studio/actions/workflows/release.yml)
