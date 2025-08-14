@@ -1,36 +1,68 @@
-import {useEffect, useState} from "react";
-import {Chat} from "./components/Chat";
-import {Settings} from "./components/Settings";
-import "./App.css";
-import {useChatStore} from "./stores/chatStore.ts";
+import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { Chat } from "./components/Chat";
+import { Settings } from "./components/Settings";
+import { useChatStore } from "./stores/chatStore.ts";
 import {
-    AppBar,
-    Box,
-    Container,
-    IconButton,
-    Menu,
-    MenuItem,
-    Tab,
-    Tabs,
-    Toolbar,
-    Typography,
-    Tooltip
+    AppBar, Box, Container, IconButton, Menu, MenuItem, Tab, Tabs,
+    Toolbar, Typography, Tooltip, styled
 } from "@mui/material";
-import SmartToyIcon from "@mui/icons-material/SmartToy";
-import SettingsIcon from "@mui/icons-material/Settings";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import TranslateIcon from "@mui/icons-material/Translate";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import StopCircleIcon from "@mui/icons-material/StopCircle";
-import {useColorMode} from "./ColorModeProvider";
-import {useTranslation} from "react-i18next";
+import {
+    SmartToy, Settings as SettingsIcon, DarkMode, LightMode,
+    Translate, PlayArrow, StopCircle
+} from "@mui/icons-material";
+import { useColorMode } from "./ColorModeProvider";
+import { useTranslation } from "react-i18next";
 import i18n from "./i18n";
-import {ProjectsMenu} from "./components/ProjectsMenu";
-import {LocalModelStatus} from "./components/chat/LocalModelStatus";
-import {InputBar} from "./components/chat/InputBar";
-import {AttachBar} from "./components/chat/AttachBar";
-import {SystemMonitor} from "./components/SystemMonitor";
+import { ProjectsMenu } from "./components/ProjectsMenu";
+import { LocalModelStatus } from "./components/chat/LocalModelStatus";
+import { InputBar } from "./components/chat/InputBar";
+import { SystemMonitor } from "./components/SystemMonitor";
+import {AttachBar} from "./components/chat/AttachBar.tsx";
+import { PluginToolbarButtons } from './components/plugins/PluginToolbarButtons';
+import { PluginInputArea } from './components/plugins/PluginInputArea';
+import { PluginAboveLocalModelStatus } from './components/plugins/PluginAboveLocalModelStatus';
+import { usePlugins } from './hooks/usePlugins';
+import { NotificationsHost } from './components/NotificationsHost';
+
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+    backgroundColor: theme.palette.background.paper,
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    transition: 'all 0.3s ease',
+    boxShadow: 'none',
+}));
+
+const AppContainer = styled(Box)({
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+    backgroundColor: 'background.default',
+});
+
+const MainContent = styled(Container)(({ theme }) => ({
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(3),
+    minHeight: 0,
+    [theme.breakpoints.down('sm')]: {
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2),
+    },
+}));
+
+const ChatFooter = styled(Box)(({ theme }) => ({
+    position: 'sticky',
+    bottom: 0,
+    zIndex: theme.zIndex.appBar,
+    borderTop: `1px solid ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(1.5, 2),
+    [theme.breakpoints.up('sm')]: {
+        padding: theme.spacing(1.5, 3),
+    },
+}));
 
 function a11yProps(index: number) {
     return {
@@ -41,16 +73,12 @@ function a11yProps(index: number) {
 
 function App() {
     const [activeTab, setActiveTab] = useState<'chat' | 'settings'>('chat');
+    // Load plugins (frontend init and UI components)
+    usePlugins();
     const {
         hasBinary,
         checkBinary,
         loadSettings,
-        apiKey,
-        apiBase,
-        apiModel,
-        deepseekUrl,
-        deepseekModel,
-        modelRepo,
         mode: chatMode,
         isServerReady,
         isStartingServer,
@@ -60,10 +88,11 @@ function App() {
         activeProjectId,
         sendMessage,
         downloadStatus,
+        persistSettings,
     } = useChatStore();
-    const {mode, toggle, setMode} = useColorMode();
-    const {t} = useTranslation();
 
+    const { mode, toggle, setMode } = useColorMode();
+    const { t } = useTranslation();
     const [langAnchor, setLangAnchor] = useState<null | HTMLElement>(null);
     const [chatInput, setChatInput] = useState('');
 
@@ -82,20 +111,29 @@ function App() {
     };
 
     useEffect(() => {
-        // Hydrate settings from DB and set theme
-        (async () => {
+        const initializeSettings = async () => {
             try {
                 const s: any = await (await import('@tauri-apps/api/core')).invoke('load_settings');
-                if (s && s.theme === 'dark') setMode('dark');
-            } catch {
-            }
+                if (s?.theme === 'dark') setMode('dark');
+            } catch {}
             await loadSettings();
-        })();
+        };
+        initializeSettings();
     }, []);
 
     useEffect(() => {
         checkBinary();
     }, [hasBinary, chatMode]);
+
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === 'F12') {
+                try { invoke('open_devtools'); } catch {}
+            }
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, []);
 
     const muiTabValue = activeTab === 'chat' ? 0 : 1;
 
@@ -104,45 +142,15 @@ function App() {
         setLangAnchor(null);
     };
 
-    // Persist theme + settings when theme changes via toggle
-    useEffect(() => {
-        (async () => {
-            try {
-                await (await import('@tauri-apps/api/core')).invoke('save_settings', {
-                    settings: {
-                        mode: chatMode,
-                        api_key: apiKey,
-                        api_base: apiBase,
-                        api_model: apiModel,
-                        deepseek_url: deepseekUrl,
-                        deepseek_model: deepseekModel,
-                        model_repo: modelRepo,
-                        theme: mode,
-                    }
-                });
-            } catch (e) {
-                console.warn('persist theme failed', e);
-            }
-        })();
-    }, [mode, chatMode, apiKey, apiBase, apiModel, deepseekUrl, deepseekModel, modelRepo]);
-
     return (
-        <Box sx={{minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column'}}>
-            <AppBar position="sticky" color="inherit" elevation={0} sx={{
-                borderBottom: 1,
-                borderColor: 'divider',
-                transition: 'background-color 0.3s ease, border-color 0.3s ease'
-            }}>
-                <Toolbar sx={{
-                    gap: 2,
-                    minHeight: {xs: 56, sm: 64},
-                    alignItems: 'center'
-                }}>
-                    {/* Группа элементов управления сервером - ПЕРЕНЕСЕНА СЮДА */}
+        <AppContainer>
+            <StyledAppBar position="sticky">
+                <Toolbar sx={{ gap: 2, minHeight: { xs: 56, sm: 64 } }}>
+                    {/* Server Control Group */}
                     {['local', 'ollama'].includes(chatMode) && (
                         <Box sx={{
                             display: 'flex',
-                            flexDirection: 'column', // Изменено на вертикальное расположение
+                            flexDirection: 'column',
                             gap: 0.5,
                             mr: 'auto'
                         }}>
@@ -156,105 +164,78 @@ function App() {
                                     width: 'fit-content'
                                 }}
                             >
-                                 {projects.find(p => p.id === (activeProjectId ?? -1))?.name || t('app.noProject')}
+                                {projects.find(p => p.id === (activeProjectId ?? -1))?.name || t('app.noProject')}
                             </Typography>
-                            <Box sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 0.5,
-                                width: 'fit-content'
-                            }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                 {isServerReady ? (
                                     <Tooltip title={t('chat.stopServer')}>
                                         <IconButton
                                             color="warning"
                                             size="small"
-                                            onClick={() => stopLlamaServer()}
+                                            onClick={stopLlamaServer}
                                             aria-label={t('chat.stopServer')!}
-                                            sx={{p: 0.75}}
                                         >
-                                            <StopCircleIcon fontSize="small"/>
+                                            <StopCircle fontSize="small"/>
                                         </IconButton>
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip
-                                        title={isStartingServer ? t('chat.serverStarting') : t('chat.startServer')}>
-                                      <span>
+                                    <Tooltip title={isStartingServer ? t('chat.serverStarting') : t('chat.startServer')}>
                                         <IconButton
                                             color="primary"
                                             size="small"
-                                            onClick={() => startLocalServer()}
+                                            onClick={startLocalServer}
                                             disabled={isStartingServer || !hasBinary}
                                             aria-label={t('chat.startServer')!}
-                                            sx={{p: 0.75}}
                                         >
-                                          <PlayArrowIcon fontSize="small"/>
+                                            <PlayArrow fontSize="small"/>
                                         </IconButton>
-                                      </span>
                                     </Tooltip>
                                 )}
                                 <SystemMonitor />
                             </Box>
-
-
                         </Box>
                     )}
 
-                    <Box sx={{
-                        display: 'flex',
-                        flexGrow: 1,
-                        justifyContent: 'flex-end',
-                        marginLeft: 'auto'
-                    }}>
+                    {/* Main Tabs */}
+                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
                         <Tabs
                             value={muiTabValue}
                             onChange={(_, val) => setActiveTab(val === 0 ? 'chat' : 'settings')}
-                            aria-label="main-tabs"
-                            textColor="primary"
-                            indicatorColor="primary"
-                            sx={{
-                                minHeight: {xs: 48, sm: 64}
-                            }}
+                            aria-label="main tabs"
+                            sx={{ minHeight: { xs: 48, sm: 64 } }}
                         >
                             <Tab
-                                icon={<SmartToyIcon fontSize="small"/>}
+                                icon={<SmartToy fontSize="small"/>}
                                 iconPosition="start"
                                 label={t('app.tabs.chat')}
                                 {...a11yProps(0)}
-                                sx={{minHeight: {xs: 48, sm: 64}, py: 0}}
+                                sx={{ minHeight: { xs: 48, sm: 64 } }}
                             />
                             <Tab
                                 icon={<SettingsIcon fontSize="small"/>}
                                 iconPosition="start"
                                 label={t('app.tabs.settings')}
                                 {...a11yProps(1)}
-                                sx={{minHeight: {xs: 48, sm: 64}, py: 0}}
+                                sx={{ minHeight: { xs: 48, sm: 64 } }}
                             />
                         </Tabs>
                     </Box>
 
-                    {/* Группа утилит (тема, язык, проекты) */}
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 0.5,
-                        ml: {xs: 0, sm: 1}
-                    }}>
-                        <ProjectsMenu/>
+                    {/* Utility Icons */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <ProjectsMenu />
+
+                        {/* Plugin toolbar buttons */}
+                        <PluginToolbarButtons />
 
                         <Tooltip title={t('app.toggleTheme')}>
                             <IconButton
                                 color="inherit"
                                 size="small"
-                                onClick={() => toggle()}
+                                onClick={() => { try { toggle(); } finally { try { persistSettings(); } catch {} } }}
                                 aria-label={t('app.toggleTheme')!}
-                                sx={{p: 0.75}}
                             >
-                                {mode === 'light' ? (
-                                    <DarkModeIcon fontSize="small"/>
-                                ) : (
-                                    <LightModeIcon fontSize="small"/>
-                                )}
+                                {mode === 'light' ? <DarkMode fontSize="small"/> : <LightMode fontSize="small"/>}
                             </IconButton>
                         </Tooltip>
 
@@ -264,14 +245,13 @@ function App() {
                                 size="small"
                                 onClick={(e) => setLangAnchor(e.currentTarget)}
                                 aria-label={t('app.language')!}
-                                sx={{p: 0.75}}
                             >
-                                <TranslateIcon fontSize="small"/>
+                                <Translate fontSize="small"/>
                             </IconButton>
                         </Tooltip>
                     </Box>
 
-                    {/* Меню выбора языка */}
+                    {/* Language Menu */}
                     <Menu
                         anchorEl={langAnchor}
                         open={Boolean(langAnchor)}
@@ -280,7 +260,7 @@ function App() {
                             paper: {
                                 sx: {
                                     mt: 1.5,
-                                    minWidth: 120
+                                    minWidth: 120,
                                 }
                             }
                         }}
@@ -288,63 +268,52 @@ function App() {
                         <MenuItem
                             onClick={() => changeLang('ru')}
                             selected={i18n.language === 'ru'}
-                            sx={{typography: 'body2'}}
                         >
                             Русский
                         </MenuItem>
                         <MenuItem
                             onClick={() => changeLang('en')}
                             selected={i18n.language === 'en'}
-                            sx={{typography: 'body2'}}
                         >
                             English
                         </MenuItem>
                     </Menu>
                 </Toolbar>
-            </AppBar>
+            </StyledAppBar>
 
-            <Container maxWidth={false} disableGutters sx={{
-                flex: 1,
-                minHeight: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                px: {xs: 2, sm: 3},
-                pt: 3,
-                pb: activeTab === 'chat' ? {xs: 14, sm: 16} : 3
-            }}>
+            <MainContent maxWidth={false} disableGutters>
                 {activeTab === 'chat' ? (
                     <>
-                        <LocalModelStatus mode={chatMode} downloadStatus={downloadStatus as any}
-                                          isServerReady={isServerReady}/>
+                        <PluginAboveLocalModelStatus />
+                        <LocalModelStatus
+                            mode={chatMode}
+                            downloadStatus={downloadStatus as any}
+                            isServerReady={isServerReady}
+                        />
                         <Chat setActiveTab={setActiveTab}/>
                     </>
                 ) : (
                     <Settings setActiveTab={setActiveTab}/>
                 )}
-            </Container>
+            </MainContent>
+
             {activeTab === 'chat' && (
-                <Box sx={{
-                    position: 'sticky',
-                    bottom: 0,
-                    zIndex: (theme) => theme.zIndex.appBar,
-                    borderTop: 1,
-                    borderColor: 'divider',
-                    bgcolor: 'background.paper',
-                    px: {xs: 2, sm: 3},
-                    py: 1.5
-                }}>
-                    <AttachBar onInsert={(text) => setChatInput((prev) => (prev ? prev + '\n\n' : '') + text)}/>
+                <ChatFooter>
+                    <PluginInputArea />
+                    <AttachBar onInsert={(text) => setChatInput((prev) => (prev ? prev + '\n' : '') + text)} />
                     <InputBar
                         input={chatInput}
                         setInput={setChatInput}
                         onSend={handleSend}
                         disabled={(chatMode === 'local' || chatMode === 'ollama') && !isServerReady}
-                        placeholder={(chatMode === 'local' || chatMode === 'ollama') && !isServerReady ? t('chat.startingServer')! : t('chat.sendingPlaceholder')!}
+                        placeholder={(chatMode === 'local' || chatMode === 'ollama') && !isServerReady ?
+                            t('chat.startingServer')! : t('chat.sendingPlaceholder')!}
                         sendLabel={t('chat.send')!}
                     />
-                </Box>
+                </ChatFooter>
             )}
-        </Box>
+            <NotificationsHost />
+        </AppContainer>
     );
 }
 

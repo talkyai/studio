@@ -139,8 +139,8 @@ export const createSettingsSlice = (
           paste_to_file_length: s.pasteToFileLength,
           parse_pdf_as_image: s.parsePdfAsImage,
           context_folder: s.contextFolder,
-          // Theme (keep existing behavior)
-          theme: 'light',
+          // Theme from current UI mode stored in localStorage
+          theme: (typeof localStorage !== 'undefined' && localStorage.getItem('color_mode') === 'dark') ? 'dark' : 'light',
         },
       });
     } catch (e) {
@@ -197,8 +197,8 @@ export const createSettingsSlice = (
     set({ deepseekModel: model });
     get().persistSettings();
   },
-  setOllamaBase: (v) => set({ ollamaBase: v }),
-  setOllamaModel: (v) => set({ ollamaModel: v }),
+  setOllamaBase: (v) => { set({ ollamaBase: v }); get().persistSettings(); },
+  setOllamaModel: (v) => { set({ ollamaModel: v }); get().persistSettings(); },
   setOllamaParamsJson: (v) => { set({ ollamaParamsJson: v }); get().persistSettings(); }, 
 
   setModelRepo: (repo) => {
@@ -215,9 +215,9 @@ export const createSettingsSlice = (
     get().persistSettings();
   },
   setActiveTab: (tab) => set({ activeTab: tab }),
-  setServerVariant: (v) => set({ serverVariant: v }),
+  setServerVariant: (v) => { set({ serverVariant: v }); get().persistSettings(); },
   setServerOS: (os) => set({ serverOS: os }),
-  setServerPort: (port) => set({ serverPort: port }),
+  setServerPort: (port) => { set({ serverPort: port }); get().persistSettings(); },
 
   setTemperature: (v) => { set({ temperature: v }); get().persistSettings(); },
   setTopK: (v) => { set({ topK: v }); get().persistSettings(); },

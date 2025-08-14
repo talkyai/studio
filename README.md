@@ -1,4 +1,7 @@
+<p align="center"><img src="public/icon.svg" alt="TalkyAI Studio Logo" width="96" height="96"></p>
+
 # TalkyAI Studio — Local & Cloud AI Assistant
+[![publish](https://github.com/talkyai/studio/actions/workflows/release.yml/badge.svg)](https://github.com/talkyai/studio/actions/workflows/release.yml)
 
 ## Next-Gen AI Orchestration Platform
 
@@ -7,10 +10,13 @@ TalkyAI Studio is a unified desktop application for seamless AI workflow managem
 > **Cross-Platform** • **Privacy-First** • **Developer-Friendly**  
 > Supports Windows, macOS & Linux. All data and keys stored locally.
 
-![TalkyAI Studio Interface](public/screen1.png)  
-![TalkyAI Studio Interface](public/screen2.png)
+![TalkyAI Studio Interface](public/screen1.png)
 
 ## ✨ Key Features
+
+### 🗨️ Chat Experience
+- Built-in Markdown rendering in chat (headings, lists, inline/blocks of code, links, emphasis)
+- In-app notifications (Snackbar stack in top-right) for actions and plugin messages
 
 ### 🚀 Multi-Provider Support
 - **Cloud APIs**:
@@ -95,6 +101,7 @@ graph TD
     "seed": 42,
     "stop": ["</s>"]
   }
+}
 ```
 
 ## 🔒 Privacy & Security
@@ -110,14 +117,56 @@ graph TD
     - 16GB+ RAM
     - NVIDIA/AMD GPU with 8GB+ VRAM
 
+## 📚 Developer Docs
+- Plugin API (EN): docs/api.md
+- API плагинов (RU): docs/api_ru.md
+
+## 🛠 Development & Build
+
+### Prerequisites
+- Node.js 18+ and npm
+- Rust (stable) via rustup
+- Tauri OS prerequisites (toolchains and system libraries): see https://tauri.app/v2/guides/getting-started/prerequisites
+  - Windows: Visual Studio C++ Build Tools, WebView2 Runtime
+  - macOS: Xcode Command Line Tools
+  - Linux: GTK3 and WebKit2GTK 4.1. Example (Debian/Ubuntu):
+    ```bash
+    sudo apt update && sudo apt install -y libwebkit2gtk-4.1-0 libgtk-3-0 librsvg2-2 build-essential curl wget file libssl-dev
+    ```
+
+### Install dependencies
+```bash
+npm install
+```
+
+### Run in development (desktop window)
+```bash
+npx tauri dev
+```
+This will:
+- start Vite dev server on http://localhost:1420
+- launch the Tauri window with hot reload
+
+### Build desktop bundles
+```bash
+npx tauri build
+```
+Artifacts will be created in src-tauri/target for your platform (e.g., .exe/.msi on Windows, .app/.dmg on macOS, .deb/.AppImage/.rpm on Linux).
+
+### Optional: Build Linux artifacts in Docker (from Windows/macOS)
+```bash
+npm run build:linux:docker
+```
+Requires Docker Desktop and will produce Linux bundles using Dockerfile.linux.
+
 ## 📜 License
-Currently unlicensed - [Contact us](mailto:ctapu4ok91@gmail.com) for licensing options.
+Licensed under the MIT License. See LICENSE.md for details.
 
 ---
 
 ### Why Choose TalkyAI Studio?
 ✅ **Unified Interface** - Manage all your AI workflows in one place  
 ✅ **Portable** - No cloud dependencies for local mode  
-✅ **Extensible** - Plugin system coming soon
+✅ **Extensible** - Plugin system with UI placements (see docs/api.md)
 
 ---

@@ -1,0 +1,38 @@
+{
+  "id": "ui-placements-demo",
+  "name": "UI Placements Demo",
+  "version": "1.0.0",
+  "description": "Demonstrates all plugin UI placements and kinds",
+  "author": "TalkyAI Studio",
+  "icon": "assets/icon.png",
+  "plugin_type": "action",
+  "frontend": {
+    "entry": "frontend/main.js",
+    "permissions": ["messages", "ui"],
+    "ui": {
+      "toolbar": [
+        { "id": "demo-toolbar-button", "tooltip": "Demo button on toolbar" }
+      ],
+      "placements": {
+        "app.toolbar": [
+          { "id": "demo-dropdown", "tooltip": "Demo dropdown on toolbar", "kind": "dropdown" }
+        ],
+        "chat.inputBar": [
+          { "id": "demo-input-custom", "tooltip": "Demo custom input", "kind": "custom" }
+        ],
+        "chat.underUserMessage": [
+          { "id": "demo-under-user-group", "tooltip": "Demo group under user", "kind": "group" }
+        ],
+        "chat.underAIMessage": [
+          { "id": "demo-under-ai-button", "tooltip": "Demo button under AI", "kind": "button" }
+        ],
+        "chat.aboveLocalModelStatus": [
+          { "id": "demo-above-status-custom", "tooltip": "Demo custom above status", "kind": "custom" }
+        ],
+        "settings.panel": [
+          { "id": "demo-settings-form", "tooltip": "Demo settings form", "kind": "form" }
+        ]
+      }
+    }
+  }
+}
