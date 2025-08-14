@@ -148,49 +148,49 @@ export const AttachBar: React.FC<AttachBarProps> = ({ onInsert }) => {
   };
 
   return (
-    <Box sx={{ pb: 1 }}>
-      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-        <Tooltip title={t('ctx.attach') ?? 'Контекст'}>
+      <Box sx={{ pb: 1 }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+          <Tooltip title={t('ctx.attach') ?? 'Контекст'}>
           <span>
             <Button size="small" variant="outlined" startIcon={<AttachFileIcon />} onClick={openMenu} disabled={busy}>
               {t('ctx.title') ?? 'Контекст'}
             </Button>
           </span>
-        </Tooltip>
-        {busy && <Chip size="small" label={t('common.loading') ?? 'Загрузка…'} />}
-      </Stack>
+          </Tooltip>
+          {busy && <Chip size="small" label={t('common.loading') ?? 'Загрузка…'} />}
+        </Stack>
 
-      <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={closeMenu}>
-        <MenuItem onClick={handlePickFiles}>
-          <InsertDriveFileIcon fontSize="small" style={{ marginRight: 8 }} /> {t('ctx.fromFiles') ?? 'Вставить файлы'}
-        </MenuItem>
-        <MenuItem onClick={handlePickDirForTree}>
-          <FolderIcon fontSize="small" style={{ marginRight: 8 }} /> {t('ctx.fromFolderTree') ?? 'Дерево папки'}
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={insertDevPrompt}>
-          <BuildIcon fontSize="small" style={{ marginRight: 8 }} /> {t('dev.insertPrompt') ?? 'Подсказка разработчику'}
-        </MenuItem>
-      </Menu>
+        <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={closeMenu}>
+          <MenuItem onClick={handlePickFiles}>
+            <InsertDriveFileIcon fontSize="small" style={{ marginRight: 8 }} /> {t('ctx.fromFiles') ?? 'Вставить файлы'}
+          </MenuItem>
+          <MenuItem onClick={handlePickDirForTree}>
+            <FolderIcon fontSize="small" style={{ marginRight: 8 }} /> {t('ctx.fromFolderTree') ?? 'Дерево папки'}
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={insertDevPrompt}>
+            <BuildIcon fontSize="small" style={{ marginRight: 8 }} /> {t('dev.insertPrompt') ?? 'Подсказка разработчику'}
+          </MenuItem>
+        </Menu>
 
-      {/* hidden inputs */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        multiple
-        accept={acceptAttr}
-        style={{ display: 'none' }}
-        onChange={onFilesChosen}
-      />
-      <input
-        type="file"
-        ref={dirInputRef}
-        multiple
-        // @ts-ignore Edge/WebView supports webkitdirectory attribute
-        webkitdirectory="true"
-        style={{ display: 'none' }}
-        onChange={onDirChosen}
-      />
-    </Box>
+        {/* hidden inputs */}
+        <input
+            type="file"
+            ref={fileInputRef}
+            multiple
+            accept={acceptAttr}
+            style={{ display: 'none' }}
+            onChange={onFilesChosen}
+        />
+        <input
+            type="file"
+            ref={dirInputRef}
+            multiple
+            // @ts-ignore Edge/WebView supports webkitdirectory attribute
+            webkitdirectory="true"
+            style={{ display: 'none' }}
+            onChange={onDirChosen}
+        />
+      </Box>
   );
 };

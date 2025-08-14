@@ -71,7 +71,7 @@ export const LocalModelStatus: React.FC<LocalModelStatusProps> = ({ mode, downlo
   const repo = mode === 'ollama' ? (ollamaModel || '—') : (modelRepo || '—');
 
   return (
-    <Box sx={{ mb: 2 }}>
+    <Box sx={{ mb: 2, ml:1, mr:1 }}>
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: expanded ? 1 : 0 }}>
         <Chip size="small" color={statusColor(downloadStatus.status)} label={statusLabel(downloadStatus.status, t)} />
         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
