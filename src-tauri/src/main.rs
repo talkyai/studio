@@ -7,9 +7,15 @@ mod db;
 mod backends;
 mod context;
 mod system;
+mod plugins;
 
 use tauri::Manager;
-use tauri::Emitter;
+use crate::plugins::PluginManager;
+
+#[tauri::command]
+fn open_devtools(window: tauri::WebviewWindow) {
+    window.open_devtools();
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn main() {
@@ -46,7 +52,13 @@ pub fn main() {
             backends::ollama::models::pull_ollama_model,
             download::check_binary_installed,
             context::scan_context_folder,
-            system::get_system_usage
+            system::get_system_usage,
+            plugins::plugins_get_plugins_list,
+            plugins::plugins_install_plugin,
+            plugins::plugins_toggle_plugin,
+            plugins::plugins_delete_plugin,
+            plugins::plugins_get_frontend_code,
+            open_devtools,
         ])
         .setup(|app| {
             println!("[main.setup] Ensuring directories and initializing DB...");
@@ -61,6 +73,21 @@ pub fn main() {
                     .with_memory(MemoryRefreshKind::everything()),
             );
             app.manage(crate::system::SystemState(std::sync::Mutex::new(sys)));
+
+            let plugins_dir = app.path()
+                .app_data_dir()
+                .map_err(|e| e.to_string())?
+                .join("plugins");
+
+            let mut plugin_manager = PluginManager::new(plugins_dir)?;
+            if let Err(e) = plugin_manager.load_builtin_plugins(&handle) {
+                println!("Warning: Failed to load builtin plugins: {}", e);
+            }
+
+            plugin_manager.load_all()?;
+
+            app.manage(std::sync::Mutex::new(plugin_manager));
+
             println!("[main.setup] Setup completed successfully.");
 
             #[cfg(debug_assertions)]

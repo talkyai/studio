@@ -22,7 +22,8 @@ const resources = {
         startServer: 'Запустить сервер',
         serverStarting: 'Сервер запускается',
         stopServer: 'Остановить сервер',
-        repository: 'Репозиторий'
+        repository: 'Репозиторий',
+        empty: 'Пока нет сообщений'
       },
       settings: {
         workMode: 'Режим работы',
@@ -69,7 +70,12 @@ const resources = {
         contextFolder: 'Папка контекста',
         contextFolderHelp: 'Файлы из этой папки будут добавляться к каждому сообщению',
         chooseFolder: 'Выбрать',
-        clear: 'Очистить'
+        clear: 'Очистить',
+        tabs: {
+          settings: 'ИИ',
+          projects: 'Проекты',
+          plugins: 'Плагины',
+        }
       },
       status: {
         inProgress: 'В процессе',
@@ -169,7 +175,8 @@ const resources = {
         startServer: 'Start server',
         serverStarting: 'Server is starting…',
         stopServer: 'Stop server',
-        repository: 'Repository'
+        repository: 'Repository',
+        empty: 'No messages yet'
       },
       settings: {
         workMode: 'Work mode',
@@ -216,7 +223,12 @@ const resources = {
         contextFolder: 'Context folder',
         contextFolderHelp: 'Files from this folder will be added to every message',
         chooseFolder: 'Choose',
-        clear: 'Clear'
+        clear: 'Clear',
+        tabs: {
+          settings: 'AI',
+          projects: 'Projects',
+          plugins: 'Plugins',
+        }
       },
       projects: {
         title: 'Projects',
