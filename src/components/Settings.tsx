@@ -23,7 +23,7 @@ import { PluginsManager } from './settings/PluginsManager';
 import { PluginSettingsPanel } from './plugins/PluginSettingsPanel';
 
 interface SettingsProps {
-    setActiveTab: (tab: 'chat' | 'settings') => void;
+    setActiveTab: (tab: 'chat' | 'builder' | 'settings') => void;
 }
 
 interface TabPanelProps {

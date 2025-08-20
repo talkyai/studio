@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Chat } from "./components/Chat";
 import { Settings } from "./components/Settings";
+import { PromptBuilder } from "./components/PromptBuilder";
 import { useChatStore } from "./stores/chatStore.ts";
 import {
     AppBar, Box, Container, IconButton, Menu, MenuItem, Tab, Tabs,
@@ -9,7 +10,7 @@ import {
 } from "@mui/material";
 import {
     SmartToy, Settings as SettingsIcon, DarkMode, LightMode,
-    Translate, PlayArrow, StopCircle
+    Translate, PlayArrow, StopCircle, Widgets
 } from "@mui/icons-material";
 import { useColorMode } from "./ColorModeProvider";
 import { useTranslation } from "react-i18next";
@@ -72,7 +73,7 @@ function a11yProps(index: number) {
 }
 
 function App() {
-    const [activeTab, setActiveTab] = useState<'chat' | 'settings'>('chat');
+    const [activeTab, setActiveTab] = useState<'chat' | 'builder' | 'settings'>('chat');
     // Load plugins (frontend init and UI components)
     usePlugins();
     const {
@@ -135,7 +136,7 @@ function App() {
         return () => window.removeEventListener('keydown', handler);
     }, []);
 
-    const muiTabValue = activeTab === 'chat' ? 0 : 1;
+    const muiTabValue = activeTab === 'chat' ? 0 : (activeTab === 'builder' ? 1 : 2);
 
     const changeLang = async (lng: 'ru' | 'en') => {
         await i18n.changeLanguage(lng);
@@ -200,7 +201,7 @@ function App() {
                     <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
                         <Tabs
                             value={muiTabValue}
-                            onChange={(_, val) => setActiveTab(val === 0 ? 'chat' : 'settings')}
+                            onChange={(_, val) => setActiveTab(val === 0 ? 'chat' : (val === 1 ? 'builder' : 'settings'))}
                             aria-label="main tabs"
                             sx={{ minHeight: { xs: 48, sm: 64 } }}
                         >
@@ -212,10 +213,17 @@ function App() {
                                 sx={{ minHeight: { xs: 48, sm: 64 } }}
                             />
                             <Tab
+                                icon={<Widgets fontSize="small"/>}
+                                iconPosition="start"
+                                label={t('app.tabs.builder')}
+                                {...a11yProps(1)}
+                                sx={{ minHeight: { xs: 48, sm: 64 } }}
+                            />
+                            <Tab
                                 icon={<SettingsIcon fontSize="small"/>}
                                 iconPosition="start"
                                 label={t('app.tabs.settings')}
-                                {...a11yProps(1)}
+                                {...a11yProps(2)}
                                 sx={{ minHeight: { xs: 48, sm: 64 } }}
                             />
                         </Tabs>
@@ -292,6 +300,8 @@ function App() {
                         />
                         <Chat setActiveTab={setActiveTab}/>
                     </>
+                ) : activeTab === 'builder' ? (
+                    <PromptBuilder setActiveTab={setActiveTab} />
                 ) : (
                     <Settings setActiveTab={setActiveTab}/>
                 )}
