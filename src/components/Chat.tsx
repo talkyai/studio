@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { MessagesList } from './chat/MessagesList';
 
 interface ChatProps {
-    setActiveTab: (tab: 'chat' | 'settings') => void;
+    setActiveTab: (tab: 'chat' | 'builder' | 'settings') => void;
 }
 
 export function Chat({ setActiveTab }: ChatProps) {
