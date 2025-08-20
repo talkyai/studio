@@ -11,12 +11,21 @@ TalkyAI Studio is a unified desktop application for seamless AI workflow managem
 > Supports Windows, macOS & Linux. All data and keys stored locally.
 
 ![TalkyAI Studio Interface](public/screen1.png)
+![TalkyAI Studio Interface](public/screen2.png)
 
 ## ✨ Key Features
 
 ### 🗨️ Chat Experience
 - Built-in Markdown rendering in chat (headings, lists, inline/blocks of code, links, emphasis)
 - In-app notifications (Snackbar stack in top-right) for actions and plugin messages
+
+### 🧱 Prompt Builder
+- Assemble prompts from ready-made blocks: Role, Context (TXT upload), Instruction, Few-shot Examples, Input variables, Constraints, Output format
+- Drag-and-drop canvas with reorder, duplicate, delete, and collapse
+- Live Preview auto-formats the final prompt and shows an approximate token counter
+- Variables via placeholders like {{name}}; substituted into preview and when executing
+- Execute sends the composed prompt to the selected LLM and switches to Chat
+- Note: TXT upload is supported; PDF/DOCX parsing will be added in future versions
 
 ### 🚀 Multi-Provider Support
 - **Cloud APIs**:
@@ -167,6 +176,7 @@ Licensed under the MIT License. See LICENSE.md for details.
 ### Why Choose TalkyAI Studio?
 ✅ **Unified Interface** - Manage all your AI workflows in one place  
 ✅ **Portable** - No cloud dependencies for local mode  
+✅ **Visual Prompt Builder** - Assemble prompts from blocks with live preview  
 ✅ **Extensible** - Plugin system with UI placements (see docs/api.md)
 
 ---

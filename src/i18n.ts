@@ -7,7 +7,7 @@ const resources = {
       app: {
         noProject: 'Проект не выбран',
         title: 'TalkyAI Studio',
-        tabs: { chat: 'Чат', settings: 'Настройки' },
+        tabs: { chat: 'Чат', builder: 'Конструктор', settings: 'Настройки' },
         toggleTheme: 'Сменить тему',
         language: 'Язык',
         projectLabel: 'Проект'
@@ -152,6 +152,89 @@ const resources = {
           prompt_n: 'Токенов в промпте',
           predicted_n: 'Сгенерировано токенов'
         }
+      },
+      builder: {
+        panel: {
+          library: 'Компоненты',
+          canvas: 'Холст',
+          preview: 'Предпросмотр',
+        },
+        library: {
+          role: { title: 'Роль (Role)', hint: 'Опиши роль ИИ' },
+          context: { title: 'Контекст (Context)', hint: 'Фоновая информация, факты' },
+          instruction: { title: 'Инструкция (Task)', hint: 'Основное задание' },
+          examples: { title: 'Примеры (Few-shot)', hint: 'Пары Ввод/Вывод' },
+          input: { title: 'Данные (Input Data)', hint: 'Переменные {{name}}' },
+          constraints: { title: 'Ограничения', hint: 'Ограничения и стиль' },
+          output_format: { title: 'Формат вывода', hint: 'JSON/Markdown и т.п.' },
+        },
+        blockTitles: {
+          role: 'Роль',
+          context: 'Контекст',
+          instruction: 'Инструкция',
+          examples: 'Примеры',
+          input: 'Данные',
+          constraints: 'Ограничения',
+          output_format: 'Формат вывода',
+        },
+        actions: {
+          duplicate: 'Дублировать',
+          delete: 'Удалить',
+        },
+        role: {
+          preset: 'Пресет',
+          presets: {
+            none: 'Без пресета',
+            copywriter: 'Копирайтер',
+            programmer: 'Программист',
+            critic: 'Критик',
+          },
+          placeholder: 'Ты — опытный ...',
+        },
+        context: {
+          uploadButton: 'Загрузить файл (txt/pdf/docx)',
+          uploadUnsupported: 'Парсинг PDF/DOCX пока не поддерживается в этой версии. Пожалуйста, вставьте текст вручную.',
+          uploadNote: 'TXT поддерживается. PDF/DOCX — позже',
+          placeholder: 'Контекст и факты',
+        },
+        instruction: {
+          placeholder: 'Опиши задание',
+        },
+        examples: {
+          exampleLabel: 'Пример {{n}}',
+          inputPlaceholder: 'Ввод',
+          outputPlaceholder: 'Вывод',
+          deleteExample: 'Удалить пример',
+          addExample: 'Добавить пример',
+        },
+        input: {
+          name: 'Имя',
+          value: 'Значение',
+          addVar: 'Добавить переменную',
+        },
+        constraints: {
+          placeholder: 'Ограничения, например: не более 100 слов',
+        },
+        output: {
+          placeholder: 'Например: верни JSON с полями ...',
+        },
+        emptyCanvas: 'Перетащите блок слева или дважды кликните по нему, чтобы добавить.',
+        preview: {
+          tokens: 'Токены',
+          serverNotReady: 'Сервер не готов',
+          sendPrompt: 'Отправить промпт в модель',
+          execute: 'Выполнить',
+        },
+        compose: {
+          role: 'Роль',
+          context: 'Контекст',
+          instruction: 'Инструкция',
+          example: 'Пример',
+          input: 'Ввод',
+          output: 'Вывод',
+          constraints: 'Ограничения',
+          output_format: 'Формат вывода',
+        },
       }
     }
   },
@@ -160,7 +243,7 @@ const resources = {
       app: {
         noProject: 'Project not selected',
         title: 'TalkyAI Studio',
-        tabs: { chat: 'Chat', settings: 'Settings' },
+        tabs: { chat: 'Chat', builder: 'Builder', settings: 'Settings' },
         toggleTheme: 'Toggle theme',
         language: 'Language',
         projectLabel: 'Project'
@@ -298,6 +381,89 @@ const resources = {
           prompt_n: 'Prompt tokens count',
           predicted_n: 'Generated tokens'
         }
+      },
+      builder: {
+        panel: {
+          library: 'Components',
+          canvas: 'Canvas',
+          preview: 'Preview',
+        },
+        library: {
+          role: { title: 'Role', hint: 'Describe the AI\'s role' },
+          context: { title: 'Context', hint: 'Background information, facts' },
+          instruction: { title: 'Instruction (Task)', hint: 'Main task' },
+          examples: { title: 'Examples (Few-shot)', hint: 'Input/Output pairs' },
+          input: { title: 'Input Data', hint: 'Variables {{name}}' },
+          constraints: { title: 'Constraints', hint: 'Constraints and style' },
+          output_format: { title: 'Output format', hint: 'JSON/Markdown etc.' },
+        },
+        blockTitles: {
+          role: 'Role',
+          context: 'Context',
+          instruction: 'Instruction',
+          examples: 'Examples',
+          input: 'Input',
+          constraints: 'Constraints',
+          output_format: 'Output format',
+        },
+        actions: {
+          duplicate: 'Duplicate',
+          delete: 'Delete',
+        },
+        role: {
+          preset: 'Preset',
+          presets: {
+            none: 'No preset',
+            copywriter: 'Copywriter',
+            programmer: 'Programmer',
+            critic: 'Critic',
+          },
+          placeholder: 'You are an experienced ...',
+        },
+        context: {
+          uploadButton: 'Upload file (txt/pdf/docx)',
+          uploadUnsupported: 'Parsing PDF/DOCX is not supported yet. Please paste the text manually.',
+          uploadNote: 'TXT is supported. PDF/DOCX — later',
+          placeholder: 'Context and facts',
+        },
+        instruction: {
+          placeholder: 'Describe the task',
+        },
+        examples: {
+          exampleLabel: 'Example {{n}}',
+          inputPlaceholder: 'Input',
+          outputPlaceholder: 'Output',
+          deleteExample: 'Delete example',
+          addExample: 'Add example',
+        },
+        input: {
+          name: 'Name',
+          value: 'Value',
+          addVar: 'Add variable',
+        },
+        constraints: {
+          placeholder: 'Constraints, e.g. no more than 100 words',
+        },
+        output: {
+          placeholder: 'For example: return JSON with fields ...',
+        },
+        emptyCanvas: 'Drag a block from the left or double-click it to add.',
+        preview: {
+          tokens: 'Tokens',
+          serverNotReady: 'Server is not ready',
+          sendPrompt: 'Send prompt to the model',
+          execute: 'Execute',
+        },
+        compose: {
+          role: 'Role',
+          context: 'Context',
+          instruction: 'Instruction',
+          example: 'Example',
+          input: 'Input',
+          output: 'Output',
+          constraints: 'Constraints',
+          output_format: 'Output format',
+        },
       }
     }
   }
